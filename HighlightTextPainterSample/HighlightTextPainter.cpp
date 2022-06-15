@@ -135,8 +135,6 @@ void HighlightTextPainter::DefaultSplitter::Split(const wchar_t* text, const wch
 		}
 	}
 
-	std::vector<std::wstring> r;
-
 	std::wstring s(text);
 	std::wregex rgx(rgxExpression, _caseSensitive ? std::wregex::ECMAScript : std::wregex::icase);
 
@@ -148,16 +146,12 @@ void HighlightTextPainter::DefaultSplitter::Split(const wchar_t* text, const wch
 		last = it;
 		const std::wsmatch match = *it;
 
-		r.push_back(match.prefix());
-		r.push_back(match.str());
-
 		startIndice.emplace_back(match.prefix().first - s.begin(), false);
 		startIndice.emplace_back(match.position(), true);
 	}
 
 	if (last != end && (*last).suffix().length() > 0)
 	{
-		r.push_back((*last).suffix());
 		startIndice.emplace_back((*last).suffix().first - s.begin(), false);
 	}
 }
