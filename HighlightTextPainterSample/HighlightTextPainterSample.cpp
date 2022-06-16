@@ -146,19 +146,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_PAINT:
         {
             HighlightTextPainter::DefaultSplitter splitter(false);
-            HighlightTextPainter text(&splitter, L"This sample shows a class, called HighlightTextPainter, that has the ability to draw given text with highlight tokens (keywords). It automatically breaks the text into multiple lines when needed.\n\nPlease try resizing this window."
+            HighlightTextPainter text(&splitter
+                , L"This sample shows a utility C++ class, called HighlightTextPainter, that has the ability to draw given text with highlight tokens (keywords)."
+                  L"It automatically breaks the text into multiple lines when needed."
+                  L"\n\nPlease try resizing this window."
+                  L"\n\nThe followings are the keywords:\nkeyword this that class"
                 , L"keyword this that class");
 
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             
-            // TODO: Setup text font here
+            // Use default GUI font
+            HGDIOBJ hFont = GetStockObject(DEFAULT_GUI_FONT);
+            HGDIOBJ hOldFont = ::SelectObject(hdc, hFont);
 
             RECT rc;
             GetClientRect(hWnd, &rc);
+            InflateRect(&rc, -4, -4);
             HighlightTextPainter::GDIPainter painter(hdc);
             text.Draw(&painter, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, false);
 
+            ::SelectObject(hdc, hOldFont);
             EndPaint(hWnd, &ps);
         }
         break;

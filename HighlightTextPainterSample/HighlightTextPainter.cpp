@@ -207,7 +207,7 @@ void HighlightTextPainter::Draw(ITextPainter* painter, int x, int y, int w, int 
 		auto itNext = it;
 		++itNext;
 		size_t len = itNext == _dynseg.end() ? _text.length() - it->first : itNext->first - it->first;
-		painter->DrawText(_text.c_str() + it->first, static_cast<int>(len), it->second.offsetX, it->second.offsetY, w, h, it->second.highlight, selected);
+		painter->DrawText(_text.c_str() + it->first, static_cast<int>(len), it->second.offsetX + x, it->second.offsetY + y, w, h, it->second.highlight, selected);
 	}
 }
 
@@ -318,8 +318,10 @@ void HighlightTextPainter::ApplyLineBreaks(ITextPainter* painter, int w, int h)
 		int cy = 0;
 		painter->MeasureText(_text.c_str() + it->first, static_cast<int>(len), cx, cy);
 
+		// if there is a line-break in this segment
 		if (itBreak != _lineBreaks.end() && it->first <= *itBreak && it->first + len >= *itBreak)
 		{
+			// Break this segment into two and put them in the list, also remove the original one.
 			std::pair<size_t, TextInfo> node1;
 			node1.first = it->first;
 			node1.second.offsetX = offsetX;
@@ -363,7 +365,37 @@ void HighlightTextPainter::GDIPainter::DrawText(const wchar_t* text, int len, in
 	if (len <= 0)
 		return;
 
-	::SetTextColor(_hdc, highlight ? RGB(255, 0, 0) : RGB(0, 0, 0));
+	const DWORD clrHighlightText = RGB(255, 0, 0);
+	const DWORD clrHighlightBk = RGB(255, 255, 32);
+	const DWORD clrHighlightSelectedText = RGB(255, 255, 0);
+
+	DWORD textClr = GetSysColor(COLOR_WINDOWTEXT);
+	DWORD highlightBkCr = clrHighlightBk;
+	DWORD highlightClr = clrHighlightText;
+
+	if (selected)
+	{
+		textClr = GetSysColor(COLOR_HIGHLIGHTTEXT);
+		highlightBkCr = GetSysColor(COLOR_MENUHILIGHT) ^ 0x00FFFFFF;
+		highlightClr = clrHighlightSelectedText;
+	}
+
+	int oldBkMode = ::GetBkMode(_hdc);
+	COLORREF oldBkColor = ::GetBkColor(_hdc);
+	COLORREF oldTextColor = ::GetTextColor(_hdc);
+
+	if (highlight)
+	{
+		::SetBkMode(_hdc, OPAQUE);
+		::SetTextColor(_hdc, highlightClr);
+		::SetBkColor(_hdc, highlightBkCr);
+	}
+	else
+	{
+		::SetBkMode(_hdc, TRANSPARENT);
+		::SetTextColor(_hdc, textClr);
+	}
+
 	RECT rc = { x, y, x + w, y + h };
 
 	// No deed to draw '\n' and spaces after '\n'
@@ -377,4 +409,8 @@ void HighlightTextPainter::GDIPainter::DrawText(const wchar_t* text, int len, in
 	{
 		::DrawText(_hdc, text, len, &rc, DT_SINGLELINE | DT_LEFT | DT_NOPREFIX);
 	}
+
+	::SetBkMode(_hdc, oldBkMode);
+	::SetBkColor(_hdc, oldBkColor);
+	::SetTextColor(_hdc, oldTextColor);
 }
