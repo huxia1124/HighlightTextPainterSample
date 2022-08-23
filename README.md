@@ -2,7 +2,7 @@
 This sample shows a class, called HighlightTextPainter, that has the ability to draw given text with highlight tokens (keywords). It automatically breaks the text into multiple lines when needed.
 
 Usage:
-```
+```c++
     case WM_PAINT:
         {
             HighlightTextPainter::DefaultSplitter splitter(false);
