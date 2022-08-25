@@ -154,6 +154,12 @@ void HighlightTextPainter::DefaultSplitter::Split(const wchar_t* text, const wch
 	{
 		startIndice.emplace_back((*last).suffix().first - s.begin(), false);
 	}
+
+	if (startIndice.empty())
+	{
+		// No matched text.
+		startIndice.emplace_back(0, false);
+	}
 }
 
 HighlightTextPainter::HighlightTextPainter(const wchar_t* text, const wchar_t* keyword, bool multiLine)
