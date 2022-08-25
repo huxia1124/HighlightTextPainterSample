@@ -156,8 +156,9 @@ void HighlightTextPainter::DefaultSplitter::Split(const wchar_t* text, const wch
 	}
 }
 
-HighlightTextPainter::HighlightTextPainter(const wchar_t* text, const wchar_t* keyword)
-	: _text(text)
+HighlightTextPainter::HighlightTextPainter(const wchar_t* text, const wchar_t* keyword, bool multiLine)
+	: _multiLineText(multiLine)
+	, _text(text)
 {
 	DefaultSplitter sp;
 	sp.Split(text, keyword, _seg);
@@ -180,8 +181,9 @@ HighlightTextPainter::HighlightTextPainter(const wchar_t* text, const wchar_t* k
 	//}
 }
 
-HighlightTextPainter::HighlightTextPainter(ITextSplitter* splitter, const wchar_t* text, const wchar_t* keyword)
-	: _text(text)
+HighlightTextPainter::HighlightTextPainter(ITextSplitter* splitter, const wchar_t* text, const wchar_t* keyword, bool multiLine)
+	: _multiLineText(multiLine)
+	, _text(text)
 {
 	splitter->Split(text, keyword, _seg);
 }
@@ -289,6 +291,11 @@ int HighlightTextPainter::GetNumCharsInLine(ITextPainter* painter, const wchar_t
 
 void HighlightTextPainter::FindLineBreaks(ITextPainter* painter, int w, int h)
 {
+	if (!_multiLineText)
+	{
+		return;
+	}
+
 	_lineBreaks.clear();
 	size_t current = 0;
 	int num = GetNumCharsInLine(painter, _text.c_str(), static_cast<int>(_text.size()), w);

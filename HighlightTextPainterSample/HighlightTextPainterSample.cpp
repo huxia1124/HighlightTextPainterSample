@@ -151,7 +151,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                   L"It automatically breaks the text into multiple lines when needed."
                   L"\n\nPlease try resizing this window."
                   L"\n\nThe followings are the keywords:\nkeyword this that class"
-                , L"keyword this that class");
+                , L"keyword this that class", true);
 
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
