@@ -120,6 +120,12 @@ static inline void trim(std::wstring& s) {
 
 void HighlightTextPainter::DefaultSplitter::Split(const wchar_t* text, const wchar_t* keywords, std::list<std::pair<size_t, bool>>& startIndice)
 {
+	if (keywords[0] == '\0')
+	{
+		startIndice.emplace_back(0, false);
+		return;
+	}
+
 	std::vector<std::wstring> tokens;
 	ParseTokens(keywords, L" ", true, tokens);
 
