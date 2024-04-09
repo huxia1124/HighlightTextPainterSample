@@ -164,7 +164,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             GetClientRect(hWnd, &rc);
             InflateRect(&rc, -4, -4);
             HighlightTextPainter::GDIPainter painter(hdc);
-            text.Draw(&painter, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, false);
+            text.Draw(&painter, static_cast<float>(rc.left), static_cast<float>(rc.top), static_cast<float>(rc.right - rc.left), static_cast<float>(rc.bottom - rc.top), false);
 
             ::SelectObject(hdc, hOldFont);
             EndPaint(hWnd, &ps);
