@@ -148,10 +148,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             HighlightTextPainter::DefaultSplitter splitter(false);
             HighlightTextPainter text(&splitter
                 , L"This sample shows a utility C++ class, called HighlightTextPainter, that has the ability to draw given text with highlight tokens (keywords)."
-                  L"It automatically breaks the text into multiple lines when needed."
+                  L"It automatically breaks the text into multiple lines when needed. Special characters like *, ?, \\, | and ^ are also handled."
                   L"\n\nPlease try resizing this window."
-                  L"\n\nThe followings are the keywords:\nkeyword this that class"
-                , L"keyword this that class", true);
+                  L"\n\nThe followings are the keywords:\nkeyword this that class * ? \\ ^ |"
+                , L"keyword this that class \\ * ? ^ |", true);
 
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
