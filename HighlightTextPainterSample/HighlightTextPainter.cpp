@@ -145,7 +145,6 @@ void HighlightTextPainter::DefaultSplitter::Split(const wchar_t* text, const wch
 		}
 
 		rgxExpression += escaped;
-
 		if (its + 1 != tokens.end())
 		{
 			rgxExpression += L"|";
@@ -422,6 +421,11 @@ void HighlightTextPainter::GDIPainter::DrawText(const wchar_t* text, int len, fl
 	}
 	else
 	{
+		if (_useDCTextColor)
+		{
+			textClr = ::GetTextColor(_hdc);
+		}
+
 		::SetBkMode(_hdc, TRANSPARENT);
 		::SetTextColor(_hdc, textClr);
 	}
@@ -493,15 +497,15 @@ void HighlightTextPainter::GDIPlusPainter::DrawText(const wchar_t* text, int len
 		MeasureText(text, len, cx, cy);
 		Gdiplus::RectF rectTextBk(x, y, cx, cy);
 
-		Gdiplus::SolidBrush bkBrush(Gdiplus::Color(static_cast<BYTE>(255), GetRValue(highlightBkCr), GetGValue(highlightBkCr), GetBValue(highlightBkCr)));
+		Gdiplus::SolidBrush bkBrush(Gdiplus::Color(static_cast<BYTE>(_alpha), GetRValue(highlightBkCr), GetGValue(highlightBkCr), GetBValue(highlightBkCr)));
 		_graphics.FillRectangle(&bkBrush, rectTextBk);
 
-		Gdiplus::SolidBrush textBrush(Gdiplus::Color(static_cast<BYTE>(255), GetRValue(highlightClr), GetGValue(highlightClr), GetBValue(highlightClr)));
+		Gdiplus::SolidBrush textBrush(Gdiplus::Color(static_cast<BYTE>(_alpha), GetRValue(highlightClr), GetGValue(highlightClr), GetBValue(highlightClr)));
 		_graphics.DrawString(text, len, &_font, rectTextMain, &_format, &textBrush);
 	}
 	else
 	{
-		Gdiplus::SolidBrush textBrush(Gdiplus::Color(static_cast<BYTE>(255), GetRValue(textClr), GetGValue(textClr), GetBValue(textClr)));
+		Gdiplus::SolidBrush textBrush(Gdiplus::Color(static_cast<BYTE>(_alpha), GetRValue(textClr), GetGValue(textClr), GetBValue(textClr)));
 		_graphics.DrawString(text, len, &_font, rectTextMain, &_format, &textBrush);
 	}
 }

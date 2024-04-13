@@ -45,7 +45,7 @@ public:
 	class GDIPainter : public ITextPainter
 	{
 	public:
-		GDIPainter(HDC hDC) : _hdc(hDC)
+		GDIPainter(HDC hDC, bool useDCTextColor = false) : _hdc(hDC), _useDCTextColor(useDCTextColor)
 		{}
 
 		virtual void MeasureText(const wchar_t* text, int len, float& cx, float& cy);
@@ -53,6 +53,7 @@ public:
 
 	protected:
 		HDC _hdc;
+		bool _useDCTextColor;
 	};
 
 #ifdef _WIN32		// Windows (x64 and x86)
@@ -60,10 +61,11 @@ public:
 	class GDIPlusPainter : public ITextPainter
 	{
 	public:
-		GDIPlusPainter(Gdiplus::Graphics& g, Gdiplus::Font& font, Gdiplus::StringFormat& format)
+		GDIPlusPainter(Gdiplus::Graphics& g, Gdiplus::Font& font, Gdiplus::StringFormat& format, BYTE alpha = 255)
 			: _graphics(g)
 			, _font(font)
 			, _format(format)
+			, _alpha(alpha)
 		{}
 
 		virtual void MeasureText(const wchar_t* text, int len, float& cx, float& cy);
@@ -73,6 +75,7 @@ public:
 		Gdiplus::Graphics& _graphics;
 		Gdiplus::Font& _font;
 		Gdiplus::StringFormat& _format;
+		BYTE _alpha;
 	};
 #endif
 
